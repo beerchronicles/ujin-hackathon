@@ -8,3 +8,5 @@
 **/**.env
 !example.env
 **/**_data/**
+yarn.lock
+package-lock.json
