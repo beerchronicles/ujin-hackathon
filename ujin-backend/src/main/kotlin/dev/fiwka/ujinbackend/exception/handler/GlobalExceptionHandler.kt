@@ -5,6 +5,7 @@ import dev.fiwka.ujinbackend.exception.InvalidScreenLocationException
 import dev.fiwka.ujinbackend.exception.MinioObjectNotFoundException
 import dev.fiwka.ujinbackend.exception.ScreenNotFoundException
 import dev.fiwka.ujinbackend.exception.TemplateNotFoundException
+import dev.fiwka.ujinbackend.exception.UjinApiException
 import dev.fiwka.ujinbackend.exception.UnauthenticatedException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -35,6 +36,17 @@ class GlobalExceptionHandler {
     )
     fun handleNotFound(exception: RuntimeException): ProblemDetail {
         val status = HttpStatus.NOT_FOUND
+        log.warn(exception) { status.reasonPhrase }
+        return ProblemDetail.forStatus(status).apply {
+            title = status.reasonPhrase
+            detail = exception.message
+        }
+    }
+
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    @ExceptionHandler(UjinApiException::class)
+    fun handleUjinApiException(exception: UjinApiException): ProblemDetail {
+        val status = HttpStatus.SERVICE_UNAVAILABLE
         log.warn(exception) { status.reasonPhrase }
         return ProblemDetail.forStatus(status).apply {
             title = status.reasonPhrase

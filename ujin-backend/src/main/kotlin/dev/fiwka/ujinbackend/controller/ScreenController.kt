@@ -1,5 +1,6 @@
 package dev.fiwka.ujinbackend.controller
 
+import dev.fiwka.ujinbackend.model.filter.ScreenFilter
 import dev.fiwka.ujinbackend.model.request.ScreenRequest
 import dev.fiwka.ujinbackend.model.response.ScreenResponse
 import dev.fiwka.ujinbackend.service.screen.ScreenService
@@ -22,8 +23,8 @@ class ScreenController(
 ) {
 
     @GetMapping
-    fun getAll(): List<ScreenResponse> =
-        screenService.getAll()
+    fun getAll(filter: ScreenFilter): List<ScreenResponse> =
+        screenService.getAll(filter)
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): ScreenResponse =

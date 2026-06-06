@@ -6,12 +6,14 @@ import dev.fiwka.ujinbackend.entity.Template
 import dev.fiwka.ujinbackend.exception.InvalidScreenLocationException
 import dev.fiwka.ujinbackend.exception.ScreenNotFoundException
 import dev.fiwka.ujinbackend.exception.TemplateNotFoundException
+import dev.fiwka.ujinbackend.model.filter.ScreenFilter
 import dev.fiwka.ujinbackend.model.request.ScreenRequest
 import dev.fiwka.ujinbackend.model.outbox.OutboxEventRequest
 import dev.fiwka.ujinbackend.model.response.ScreenResponse
 import dev.fiwka.ujinbackend.model.response.TemplateResponse
 import dev.fiwka.ujinbackend.repository.ScreenRepository
 import dev.fiwka.ujinbackend.repository.TemplateRepository
+import dev.fiwka.ujinbackend.repository.specification.ScreenSpecifications
 import dev.fiwka.ujinbackend.service.outbox.OutboxService
 import dev.fiwka.ujinbackend.util.Qualifiers
 import dev.fiwka.ujinbackend.util.ScreenEventTypes
@@ -31,8 +33,8 @@ class ScreenServiceImpl(
 ) : ScreenService {
 
     @Transactional(readOnly = true)
-    override fun getAll(): List<ScreenResponse> =
-        screenRepository.findAll().map(ScreenResponse::from)
+    override fun getAll(filter: ScreenFilter): List<ScreenResponse> =
+        screenRepository.findAll(ScreenSpecifications.byFilter(filter)).map(ScreenResponse::from)
 
     @Transactional(readOnly = true)
     override fun getById(id: Long): ScreenResponse =

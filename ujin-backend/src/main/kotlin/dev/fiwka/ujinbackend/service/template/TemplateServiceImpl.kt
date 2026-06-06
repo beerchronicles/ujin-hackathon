@@ -4,11 +4,13 @@ import dev.fiwka.ujinbackend.adapter.minio.MinioAdapter
 import dev.fiwka.ujinbackend.entity.Template
 import dev.fiwka.ujinbackend.exception.InvalidTemplateImageException
 import dev.fiwka.ujinbackend.exception.TemplateNotFoundException
+import dev.fiwka.ujinbackend.model.filter.TemplateFilter
 import dev.fiwka.ujinbackend.model.request.TemplateRequest
 import dev.fiwka.ujinbackend.model.outbox.OutboxEventRequest
 import dev.fiwka.ujinbackend.model.response.TemplateResponse
 import dev.fiwka.ujinbackend.repository.ScreenRepository
 import dev.fiwka.ujinbackend.repository.TemplateRepository
+import dev.fiwka.ujinbackend.repository.specification.TemplateSpecifications
 import dev.fiwka.ujinbackend.service.outbox.OutboxService
 import dev.fiwka.ujinbackend.util.ScreenEventTypes
 import dev.fiwka.ujinbackend.util.ScreenWebSocketDestinations
@@ -26,8 +28,8 @@ class TemplateServiceImpl(
 ) : TemplateService {
 
     @Transactional(readOnly = true)
-    override fun getAll(): List<TemplateResponse> =
-        templateRepository.findAll().map(TemplateResponse::from)
+    override fun getAll(filter: TemplateFilter): List<TemplateResponse> =
+        templateRepository.findAll(TemplateSpecifications.byFilter(filter)).map(TemplateResponse::from)
 
     @Transactional(readOnly = true)
     override fun getById(id: Long): TemplateResponse =

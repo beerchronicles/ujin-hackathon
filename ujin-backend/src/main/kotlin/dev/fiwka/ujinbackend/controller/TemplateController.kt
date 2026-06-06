@@ -1,5 +1,6 @@
 package dev.fiwka.ujinbackend.controller
 
+import dev.fiwka.ujinbackend.model.filter.TemplateFilter
 import dev.fiwka.ujinbackend.model.request.TemplateRequest
 import dev.fiwka.ujinbackend.model.response.TemplateResponse
 import dev.fiwka.ujinbackend.service.template.TemplateService
@@ -24,8 +25,8 @@ class TemplateController(
 ) {
 
     @GetMapping
-    fun getAll(): List<TemplateResponse> =
-        templateService.getAll()
+    fun getAll(filter: TemplateFilter): List<TemplateResponse> =
+        templateService.getAll(filter)
 
     @GetMapping("/{id}")
     fun getById(@PathVariable id: Long): TemplateResponse =

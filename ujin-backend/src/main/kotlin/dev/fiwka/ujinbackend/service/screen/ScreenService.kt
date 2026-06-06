@@ -1,11 +1,12 @@
 package dev.fiwka.ujinbackend.service.screen
 
+import dev.fiwka.ujinbackend.model.filter.ScreenFilter
 import dev.fiwka.ujinbackend.model.request.ScreenRequest
 import dev.fiwka.ujinbackend.model.response.ScreenResponse
 
 interface ScreenService {
 
-    fun getAll(): List<ScreenResponse>
+    fun getAll(filter: ScreenFilter = ScreenFilter()): List<ScreenResponse>
 
     fun getById(id: Long): ScreenResponse
 
