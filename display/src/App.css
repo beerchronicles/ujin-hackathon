@@ -1,105 +1,97 @@
+.emergencyBlock{
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  font-size: clamp(20px, 3.2vh, 32px);
+  justify-content: flex-start;
+  align-items: center;
+  height: 5vh;
+  margin: 0px;
+  padding: 0px 20px;
+}
 li{
   all: unset
 }
 p{
   all: unset
 }
-div{ background-color:#E9E9E9}
+body{
+  background-color:#E9E9E9
+}
 .screenHeader{
+  margin: 0px;
 background: linear-gradient(to right, #178981, #23CEC2);
 color: white;
-height: 96px;
+height: 5vh;
 display: flex;
+font-size: clamp(20px, 2.8vh, 38px);
 justify-content:center;
 align-items: center;
-margin:0px;
-margin-bottom: 30px
+margin-bottom: 1vh;
 }
 .CarouselWrap{
   margin: 0 20px;
 }
+.newsSection{
+  height: 33vh;
+  margin-top: 1vh;
+}
+.infoSection{
+  min-height: 43vh;
+}
 .gkhNewsTitle{
+  display: flex;
+  justify-content:center;
+  align-items: center;
   background: linear-gradient(to right, #178981, #23CEC2);
+  font-size: clamp(14px, 1.8vh, 28px);
   color: white;
+  height: 7vh;
   margin:0;
-  
 }
 .gkhNewsText{
   border: 2px solid #747474;
-  height: 540px;
-  margin-bottom: 1px;
   display:flex;
   justify-content: flex-start;
   box-sizing: border-box;
+  height: 20vh;
   padding: 5px;
-}
-.gkhNewsGrid{
-  display: grid;
-  grid-template-columns: 467px 520px;
-
+  font-size: clamp(10px, 1.35vh, 22px);
+  line-height: 1.25;
 }
 .gkhNewsList{
   display:flex;
   flex-direction: column;
   margin: 0px;
   padding: 0px;
-  margin-left: 30px
 }
 .gkhNewsItem{
-  height: 70px;
+  height: 3vh;
   background: linear-gradient(to right, #178981, #23CEC2);
   color: white;
   margin-bottom: 30px;
-  width: 520px;
+  width: auto;
   display: flex;
   justify-content:center;
 align-items: center;
-}
-.freeSpaceInfo{
-  display: grid;
-  margin: 10px 0;
-  grid-template-columns: 522px 542px;
-}
-.unusedStorages{
-font-size: 32px;
-border-right: 1px solid #747474;
-  display: flex;
-  justify-content:center;
-align-items: center;
-height:90px
-}
-.freeParkingSpaces{
-  font-size: 32px;
-  height:90px;
-  display: flex;
-  justify-content:center;
-  align-items: center;
-}
-.footer{
-  background: linear-gradient(to right, #178981, #23CEC2);
-  color: white;
-  height: 96px;
 }
 .companyName{
   margin: auto 0px;
-  font-size: 32px;
+  font-size: clamp(16px, 2.4vh, 34px);
   display: flex;
   justify-content:center;
   align-items: center;
-  margin-left:857px;
-  width:88px;
-  height:88px;
+  height: 5vh;
 }
 .informDashboardRules{
-  width: 467px;
-  height: 781px;
   border: 2px solid #747474
 }
 .informDashboardRulesHeader{
   color: white;
   background: linear-gradient(to right, #178981, #23CEC2);
-  height:88px;
+  height: 3vh;
   display: flex;
+  font-size: clamp(14px, 2.2vh, 32px);
   justify-content:center;
   align-items: center;
   margin-top: 0px 
@@ -112,13 +104,14 @@ height:90px
   padding:0px;
 }
 .ruleItem{
-  font-size: 20px;
+  font-size: 18px;
   text-align: start;
-  margin-left: 15px
+  margin-left: 15px;
+  font-size: clamp(10px, 1.35vh, 22px);
+  line-height: 1.25;
 }
 .informDashboardContainer{
   display: flex;
-
 }
 .informDashboardContacts{
   box-sizing: border-box;
@@ -126,26 +119,34 @@ height:90px
   padding-left: 15px;
   color: white;
   background: linear-gradient(to right, #178981, #23CEC2);
-  width: 507px;
-  height:160px;
   display:flex;
   flex-direction: column;
   align-items: start;
-  font-size: 22px;
-  gap: 12px;
-  margin-bottom:30px
+  height: 7vh;
+  margin-bottom: 2vh;
+}
+.contactsItem{
+   font-size: clamp(10px, 1.25vh, 18px);
+}
+.infoContainer{
+  border: 2px solid #747474;
+  margin-bottom: 15px;
+  display:flex;
+  flex-direction: column;
+}
+.infoContainerItem {
+  font-size: clamp(10px, 1.35vh, 22px);
+  line-height: 1.25;
 }
 .grphicTitle{
-  width: 507px; 
-  height: 82px;
-  font-size: 28px;
+  height: 3vh;
+  font-size: clamp(14px, 1.8vh, 32px);
   color: white;
   background: linear-gradient(to right, #178981, #23CEC2);
   display: flex;
   justify-content:center;
   align-items: center;
   margin:0px;
-
 }
 .left{
   margin-left: 50px;
@@ -153,9 +154,28 @@ height:90px
 .right{
   margin-left:20px
 }
-.infoContainer{
-  width:507px;
-  height: 205px;
-  border: 2px solid #747474;
-    margin-bottom: 15px
+.freeSpaceInfo{
+  height: 5vh;
+  margin: 1vh 0;
 }
+.unusedStorages{
+font-size: 22px;
+display: flex;
+justify-content:center;
+align-items: center;
+}
+.divider{
+  border-right: 1px solid #747474;
+}
+.freeParkingSpaces{
+  font-size: 22px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}
+.footer{
+  background: linear-gradient(to right, #178981, #23CEC2);
+  color: white;
+  height: 5vh;
+}
+
