@@ -29,14 +29,12 @@ import { useEffect, useState } from "react";
           // Первичное состояние: backend отдаст список текущих событий.
           client.subscribe(`/app/screens/${screenId}/events`, (message) => {
             const currentEvents = JSON.parse(message.body) as ScreenNotification[];
-            console.log(currentEvents)
             setEvents(currentEvents);
           });
 
           // Live updates: сюда backend пушит изменения шаблона/новостей.
           client.subscribe(`/topic/screens/${screenId}/events`, (message) => {
             const event = JSON.parse(message.body) as ScreenNotification;
-            console.log(event)
             setEvents((prev) => {
             if (event.eventId !== null && prev.some((e) => e.eventId === event.eventId)) {
               return prev;

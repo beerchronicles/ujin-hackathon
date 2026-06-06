@@ -24,6 +24,8 @@ class SecurityConfiguration(
                 it
                     .requestMatchers("/login/**").permitAll()
                     .requestMatchers("/ws/**").permitAll()
+                    .requestMatchers("/display/**").permitAll()
+                    .requestMatchers("/images/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
                     .requestMatchers("/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
