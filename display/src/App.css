@@ -1,0 +1,161 @@
+li{
+  all: unset
+}
+p{
+  all: unset
+}
+div{ background-color:#E9E9E9}
+.screenHeader{
+background: linear-gradient(to right, #178981, #23CEC2);
+color: white;
+height: 96px;
+display: flex;
+justify-content:center;
+align-items: center;
+margin:0px;
+margin-bottom: 30px
+}
+.CarouselWrap{
+  margin: 0 20px;
+}
+.gkhNewsTitle{
+  background: linear-gradient(to right, #178981, #23CEC2);
+  color: white;
+  margin:0;
+  
+}
+.gkhNewsText{
+  border: 2px solid #747474;
+  height: 540px;
+  margin-bottom: 1px;
+  display:flex;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding: 5px;
+}
+.gkhNewsGrid{
+  display: grid;
+  grid-template-columns: 467px 520px;
+
+}
+.gkhNewsList{
+  display:flex;
+  flex-direction: column;
+  margin: 0px;
+  padding: 0px;
+  margin-left: 30px
+}
+.gkhNewsItem{
+  height: 70px;
+  background: linear-gradient(to right, #178981, #23CEC2);
+  color: white;
+  margin-bottom: 30px;
+  width: 520px;
+  display: flex;
+  justify-content:center;
+align-items: center;
+}
+.freeSpaceInfo{
+  display: grid;
+  margin: 10px 0;
+  grid-template-columns: 522px 542px;
+}
+.unusedStorages{
+font-size: 32px;
+border-right: 1px solid #747474;
+  display: flex;
+  justify-content:center;
+align-items: center;
+height:90px
+}
+.freeParkingSpaces{
+  font-size: 32px;
+  height:90px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+}
+.footer{
+  background: linear-gradient(to right, #178981, #23CEC2);
+  color: white;
+  height: 96px;
+}
+.companyName{
+  margin: auto 0px;
+  font-size: 32px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  margin-left:857px;
+  width:88px;
+  height:88px;
+}
+.informDashboardRules{
+  width: 467px;
+  height: 781px;
+  border: 2px solid #747474
+}
+.informDashboardRulesHeader{
+  color: white;
+  background: linear-gradient(to right, #178981, #23CEC2);
+  height:88px;
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  margin-top: 0px 
+}
+.ruleList{
+  display:flex;
+  flex-direction: column;
+  gap: 20px;
+  margin:0px;
+  padding:0px;
+}
+.ruleItem{
+  font-size: 20px;
+  text-align: start;
+  margin-left: 15px
+}
+.informDashboardContainer{
+  display: flex;
+
+}
+.informDashboardContacts{
+  box-sizing: border-box;
+  padding-top: 5px;
+  padding-left: 15px;
+  color: white;
+  background: linear-gradient(to right, #178981, #23CEC2);
+  width: 507px;
+  height:160px;
+  display:flex;
+  flex-direction: column;
+  align-items: start;
+  font-size: 22px;
+  gap: 12px;
+  margin-bottom:30px
+}
+.grphicTitle{
+  width: 507px; 
+  height: 82px;
+  font-size: 28px;
+  color: white;
+  background: linear-gradient(to right, #178981, #23CEC2);
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  margin:0px;
+
+}
+.left{
+  margin-left: 50px;
+}
+.right{
+  margin-left:20px
+}
+.infoContainer{
+  width:507px;
+  height: 205px;
+  border: 2px solid #747474;
+    margin-bottom: 15px
+}
