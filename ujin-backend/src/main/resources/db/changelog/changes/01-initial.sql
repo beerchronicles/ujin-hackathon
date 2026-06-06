@@ -1,0 +1,2 @@
+--liquibase formatted sql
+--changeset fiwka:01-initial
