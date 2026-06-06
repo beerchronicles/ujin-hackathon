@@ -5,5 +5,6 @@ import java.net.URI
 
 @ConfigurationProperties(prefix = "ujin")
 data class UjinProperties(
-    val baseUrl: URI
+    val baseUrl: URI,
+    val syncToken: String? = null
 )

@@ -14,6 +14,7 @@ spring:
 
 ujin:
   base-url: https://hck-api.unicorn.icu/
+  sync-token: ${UJIN_SYNC_TOKEN:}
 
 minio:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
@@ -24,3 +25,10 @@ minio:
 outbox:
   scheduler:
     fixed-delay: ${OUTBOX_SCHEDULER_FIXED_DELAY:1000}
+
+news:
+  scheduler:
+    sync-enabled: ${NEWS_SYNC_ENABLED:true}
+    cleanup-enabled: ${NEWS_CLEANUP_ENABLED:true}
+    sync-fixed-delay: ${NEWS_SYNC_FIXED_DELAY:300000}
+    cleanup-fixed-delay: ${NEWS_CLEANUP_FIXED_DELAY:60000}

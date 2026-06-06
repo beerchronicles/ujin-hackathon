@@ -16,8 +16,12 @@ class News(
     var id: Long? = null,
     @Column(name = "news_id", nullable = false)
     var newsId: Long,
-    @Column(name = "expires_at", nullable = false)
-    var expiresAt: Instant,
+    @Column(name = "complex", nullable = false)
+    var complex: Long,
+    @Column(name = "building", nullable = false)
+    var building: Long,
+    @Column(name = "expires_at")
+    var expiresAt: Instant? = null,
     @Column(name = "title", nullable = false, columnDefinition = "text")
     var title: String,
     @Column(name = "content", nullable = false, columnDefinition = "text")

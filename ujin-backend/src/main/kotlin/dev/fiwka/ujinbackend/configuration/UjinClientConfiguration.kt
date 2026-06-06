@@ -53,4 +53,23 @@ class UjinClientConfiguration(
             .createClient<UjinClient>()
     }
 
+    @Bean
+    @Qualifier(Qualifiers.SYNC_CLIENT)
+    fun syncClient(): UjinClient {
+        val restClient = RestClient.builder()
+            .baseUrl(properties.baseUrl)
+            .requestInterceptor { request, bytes, execution ->
+                properties.syncToken
+                    ?.takeIf(String::isNotBlank)
+                    ?.let(request.headers::setBearerAuth)
+
+                execution.execute(request, bytes)
+            }
+            .build()
+        val restClientAdapter = RestClientAdapter.create(restClient)
+
+        return HttpServiceProxyFactory.builderFor(restClientAdapter).build()
+            .createClient<UjinClient>()
+    }
+
 }

@@ -27,6 +27,7 @@ class SecurityConfiguration(
                     .requestMatchers("/login/**").permitAll()
                     .requestMatchers("/ws/**").permitAll()
                     .requestMatchers("/swagger-ui/**").permitAll()
+                    .requestMatchers("/v3/api-docs/**").permitAll()
                     .anyRequest().authenticated()
             }
             .cors {

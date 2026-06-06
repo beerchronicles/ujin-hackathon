@@ -3,6 +3,7 @@ package dev.fiwka.ujinbackend.client.ujin
 import dev.fiwka.ujinbackend.client.ujin.response.UjinResponse
 import dev.fiwka.ujinbackend.client.ujin.response.building.BuildingListResponse
 import dev.fiwka.ujinbackend.client.ujin.response.complex.ComplexListResponse
+import dev.fiwka.ujinbackend.client.ujin.response.news.NewsListResponse
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.service.annotation.GetExchange
 
@@ -21,4 +22,10 @@ interface UjinClient {
         @RequestParam("page") page: Int? = null,
         @RequestParam("per_page") perPage: Int? = null
     ): UjinResponse<BuildingListResponse>
+
+    @GetExchange("/v1/news/list")
+    fun getNewsList(
+        @RequestParam("page") page: Int? = null,
+        @RequestParam("type") type: String? = null
+    ): UjinResponse<NewsListResponse>
 }
