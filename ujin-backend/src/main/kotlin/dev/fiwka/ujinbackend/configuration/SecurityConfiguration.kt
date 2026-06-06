@@ -3,8 +3,6 @@ package dev.fiwka.ujinbackend.configuration
 import dev.fiwka.ujinbackend.security.UjinAuthenticationProvider
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -69,22 +67,10 @@ class SecurityConfiguration(
     fun corsConfigurationSource(): UrlBasedCorsConfigurationSource {
         val config = CorsConfiguration()
 
-        config.allowedOrigins = listOf("*")
-
-        config.allowedMethods = listOf(
-            HttpMethod.GET.name(),
-            HttpMethod.POST.name(),
-            HttpMethod.PUT.name(),
-            HttpMethod.PATCH.name(),
-            HttpMethod.DELETE.name(),
-            HttpMethod.OPTIONS.name()
-        )
-
+        config.allowedOriginPatterns = listOf("*")
+        config.allowedMethods = listOf("*")
         config.allowedHeaders = listOf("*")
-
-        config.exposedHeaders = listOf(
-            HttpHeaders.SET_COOKIE
-        )
+        config.exposedHeaders = listOf("*")
 
         config.allowCredentials = true
         config.maxAge = 3600
