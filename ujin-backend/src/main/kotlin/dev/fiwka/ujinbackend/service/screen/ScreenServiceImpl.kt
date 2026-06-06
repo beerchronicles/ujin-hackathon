@@ -60,6 +60,17 @@ class ScreenServiceImpl(
     }
 
     @Transactional
+    override fun emergencyReset(id: Long): ScreenResponse {
+        val screen = getScreen(id)
+
+        screen.chs = false
+        screen.chsText = null
+        enqueueCurrentTemplate(screen, screen.template)
+
+        return ScreenResponse.from(screen)
+    }
+
+    @Transactional
     override fun delete(id: Long) {
         screenRepository.delete(getScreen(id))
     }

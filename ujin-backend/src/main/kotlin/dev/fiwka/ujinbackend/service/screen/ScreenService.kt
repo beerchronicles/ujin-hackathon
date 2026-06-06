@@ -14,5 +14,7 @@ interface ScreenService {
 
     fun update(id: Long, request: ScreenRequest): ScreenResponse
 
+    fun emergencyReset(id: Long): ScreenResponse
+
     fun delete(id: Long)
 }

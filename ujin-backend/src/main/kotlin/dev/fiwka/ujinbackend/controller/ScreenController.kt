@@ -42,6 +42,10 @@ class ScreenController(
     ): ScreenResponse =
         screenService.update(id, request)
 
+    @PostMapping("/{id}/emergency_reset")
+    fun emergencyReset(@PathVariable id: Long): ScreenResponse =
+        screenService.emergencyReset(id)
+
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(@PathVariable id: Long) {
