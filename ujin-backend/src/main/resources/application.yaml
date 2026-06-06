@@ -12,6 +12,12 @@ spring:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
 
+session:
+  cookie:
+    name: ${SESSION_COOKIE_NAME:SESSION}
+    same-site: ${SESSION_COOKIE_SAME_SITE:None}
+    secure: ${SESSION_COOKIE_SECURE:false}
+
 ujin:
   base-url: https://hck-api.unicorn.icu/
   sync-token: ${UJIN_SYNC_TOKEN:}
