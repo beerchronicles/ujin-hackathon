@@ -6,7 +6,6 @@ import dev.fiwka.ujinbackend.client.ujin.response.storage.StorageResponse
 import dev.fiwka.ujinbackend.exception.ScreenNotFoundException
 import dev.fiwka.ujinbackend.exception.UjinApiException
 import dev.fiwka.ujinbackend.model.response.DisplayAvailabilityResponse
-import dev.fiwka.ujinbackend.properties.UjinProperties
 import dev.fiwka.ujinbackend.repository.ScreenRepository
 import dev.fiwka.ujinbackend.util.Qualifiers
 import org.springframework.beans.factory.annotation.Qualifier
@@ -18,34 +17,29 @@ import org.springframework.transaction.annotation.Transactional
 class DisplayAvailabilityServiceImpl(
     @Qualifier(Qualifiers.SYNC_CLIENT)
     private val ujinClient: UjinClient,
-    private val screenRepository: ScreenRepository,
-    private val ujinProperties: UjinProperties
+    private val screenRepository: ScreenRepository
 ) : DisplayAvailabilityService {
 
     @Transactional(readOnly = true)
     override fun getAvailability(screenId: Long): DisplayAvailabilityResponse {
         val screen = screenRepository.findByIdOrNull(screenId) ?: throw ScreenNotFoundException(screenId)
-        val token = ujinProperties.syncToken?.takeIf(String::isNotBlank)
-            ?: throw UjinApiException("UJIN_SYNC_TOKEN is not configured")
         val complexes = listOf(screen.complex)
         val buildings = listOf(screen.building)
 
-        val parking = ujinClient.getFreeParking(
-            token = token,
+        val parking = ujinClient.getUnassignedParking(
             complexes = complexes,
             buildings = buildings
         )
         if (parking.error != UJIN_SUCCESS_CODE) {
-            throw UjinApiException("Free parking request failed: ${parking.message}")
+            throw UjinApiException("Unassigned parking request failed: ${parking.message}")
         }
 
-        val storage = ujinClient.getFreeStorage(
-            token = token,
+        val storage = ujinClient.getUnassignedStorage(
             complexes = complexes,
             buildings = buildings
         )
         if (storage.error != UJIN_SUCCESS_CODE) {
-            throw UjinApiException("Free storage request failed: ${storage.message}")
+            throw UjinApiException("Unassigned storage request failed: ${storage.message}")
         }
 
         return DisplayAvailabilityResponse(

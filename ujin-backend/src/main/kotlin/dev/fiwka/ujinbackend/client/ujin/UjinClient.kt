@@ -31,17 +31,15 @@ interface UjinClient {
         @RequestParam("type") type: String? = null
     ): UjinResponse<NewsListResponse>
 
-    @GetExchange("/api/v1/parking/free")
-    fun getFreeParking(
-        @RequestParam("token") token: String? = null,
-        @RequestParam("complexes[]") complexes: List<Long>? = null,
-        @RequestParam("buildings[]") buildings: List<Long>? = null
+    @GetExchange("/api/v1/parking/unassigned")
+    fun getUnassignedParking(
+        @RequestParam("complexes") complexes: List<Long>? = null,
+        @RequestParam("buildings") buildings: List<Long>? = null
     ): UjinResponse<ParkingResponse>
 
-    @GetExchange("/api/v1/storage/free")
-    fun getFreeStorage(
-        @RequestParam("token") token: String? = null,
-        @RequestParam("complexes[]") complexes: List<Long>? = null,
-        @RequestParam("buildings[]") buildings: List<Long>? = null
+    @GetExchange("/api/v1/storage/unassigned")
+    fun getUnassignedStorage(
+        @RequestParam("complexes") complexes: List<Long>? = null,
+        @RequestParam("buildings") buildings: List<Long>? = null
     ): UjinResponse<StorageResponse>
 }
