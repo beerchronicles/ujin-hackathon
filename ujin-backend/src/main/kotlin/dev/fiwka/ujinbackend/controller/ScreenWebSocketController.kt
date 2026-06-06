@@ -12,6 +12,10 @@ class ScreenWebSocketController(
 ) {
 
     @SubscribeMapping("/screens/{screenId}/events")
-    fun subscribe(@DestinationVariable screenId: Long): ScreenNotification =
-        screenConnectionService.getCurrentTemplateEvent(screenId)
+    fun subscribe(@DestinationVariable screenId: Long): List<ScreenNotification> =
+        screenConnectionService.getCurrentEvents(screenId)
+
+    @SubscribeMapping("/screens/{screenId}/news")
+    fun subscribeNews(@DestinationVariable screenId: Long): ScreenNotification =
+        screenConnectionService.getCurrentNewsEvent(screenId)
 }

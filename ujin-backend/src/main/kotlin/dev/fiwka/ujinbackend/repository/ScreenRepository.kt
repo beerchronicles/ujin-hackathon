@@ -7,4 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 interface ScreenRepository : JpaRepository<Screen, Long> {
 
     fun findAllByTemplate(template: Template): List<Screen>
+
+    fun findAllByComplexAndBuilding(complex: Long, building: Long): List<Screen>
 }
