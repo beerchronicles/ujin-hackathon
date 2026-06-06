@@ -1,27 +1,26 @@
 package dev.fiwka.ujinbackend.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
-import kotlin.properties.Delegates
+import jakarta.persistence.*
+
 
 @Entity
 @Table(name = "screens")
-class Screen {
-
+class Screen(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Long? = null
-    lateinit var name: String
-    @ManyToOne
-    @JoinColumn(name = "template_id")
-    lateinit var template: Template
-    var building: Long = 0
-    var complex: Long = 0
-    var chs: Boolean = false
+    @Column(name = "id")
+    var id: Long? = null,
+    @Column(name = "name", nullable = false)
+    var name: String,
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "template_id", nullable = false)
+    var template: Template,
+    @Column(name = "building", nullable = false)
+    var building: Long = 0,
+    @Column(name = "complex", nullable = false)
+    var complex: Long = 0,
+    @Column(name = "chs", nullable = false)
+    var chs: Boolean = false,
+    @Column(name = "chs_text")
     var chsText: String? = null
-}
+)
