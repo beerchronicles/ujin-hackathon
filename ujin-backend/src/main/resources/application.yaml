@@ -7,7 +7,6 @@ spring:
     password: ${POSTGRES_PASSWORD:postgres}
   liquibase:
     change-log: classpath:/db/changelog/master.yaml
-    enabled: false
   data:
     redis:
       host: ${REDIS_HOST:localhost}
