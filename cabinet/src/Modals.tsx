@@ -1,13 +1,10 @@
 import { useState } from 'react';
-import type { Template } from './common';
+import type { Building, Complex, Screen, Template } from './common';
 import {
-  MOCK_SCREENS,
-  getBuildingsByComplex,
-  getComplexes,
+  getBuildingTitle,
+  getComplexTitle,
   getScreenIds,
-  getScreenNameById,
-  getScreensByBuilding,
-  getScreensByComplex,
+  unique,
 } from './common';
 
 interface PreviewModalProps {
@@ -43,25 +40,33 @@ export function PreviewModal({ template, onClose }: PreviewModalProps) {
 
 interface AssignScreensModalProps {
   template: Template | null;
+  screens: Screen[];
+  complexes: Complex[];
+  buildings: Building[];
+  onSubmit: (screenIds: number[]) => void;
   onClose: () => void;
 }
 
 export function AssignScreensModal({
   template,
+  screens,
+  complexes,
+  buildings,
+  onSubmit,
   onClose,
 }: AssignScreensModalProps) {
-  const [selectedScreens, setSelectedScreens] = useState<string[]>([]);
+  const [selectedScreens, setSelectedScreens] = useState<number[]>([]);
 
   if (!template) return null;
 
   const templateName = template.name;
-  const allScreenIds = getScreenIds(MOCK_SCREENS);
+  const allScreenIds = getScreenIds(screens);
 
-  function areAllSelected(ids: string[]) {
+  function areAllSelected(ids: number[]) {
     return ids.every((id) => selectedScreens.includes(id));
   }
 
-  function toggleScreens(ids: string[]) {
+  function toggleScreens(ids: number[]) {
     setSelectedScreens((currentList) => {
       const shouldRemove = ids.every((id) => currentList.includes(id));
 
@@ -73,12 +78,11 @@ export function AssignScreensModal({
     });
   }
 
-  function handleSubmit() {
-    const selectedNames = selectedScreens.map(getScreenNameById).join(', ');
-
-    alert(`Шаблон "${templateName}" назначен на экраны: ${selectedNames}`);
-    onClose();
-  }
+  const complexIds = unique(
+    screens
+      .map((screen) => screen.complex)
+      .filter((id): id is number => typeof id === 'number')
+  );
 
   return (
     <div className="modal-overlay" onClick={onClose}>
@@ -100,28 +104,42 @@ export function AssignScreensModal({
             strong
           />
 
-          {getComplexes().map((complex) => {
-            const complexScreens = getScreensByComplex(complex);
+          {complexIds.map((complexId) => {
+            const complexScreens = screens.filter(
+              (screen) => screen.complex === complexId
+            );
+
             const complexScreenIds = getScreenIds(complexScreens);
 
+            const buildingIds = unique(
+              complexScreens
+                .map((screen) => screen.building)
+                .filter((id): id is number => typeof id === 'number')
+            );
+
             return (
-              <div key={complex}>
+              <div key={complexId}>
                 <CheckLine
-                  label={complex}
+                  label={getComplexTitle(complexes, complexId)}
                   checked={areAllSelected(complexScreenIds)}
                   onChange={() => toggleScreens(complexScreenIds)}
                   strong
                 />
 
                 <div style={{ paddingLeft: '24px' }}>
-                  {getBuildingsByComplex(complex).map((building) => {
-                    const buildingScreens = getScreensByBuilding(complex, building);
+                  {buildingIds.map((buildingId) => {
+                    const buildingScreens = screens.filter(
+                      (screen) =>
+                        screen.complex === complexId &&
+                        screen.building === buildingId
+                    );
+
                     const buildingScreenIds = getScreenIds(buildingScreens);
 
                     return (
-                      <div key={`${complex}::${building}`}>
+                      <div key={buildingId}>
                         <CheckLine
-                          label={building}
+                          label={getBuildingTitle(buildings, buildingId)}
                           checked={areAllSelected(buildingScreenIds)}
                           onChange={() => toggleScreens(buildingScreenIds)}
                           strong
@@ -148,7 +166,7 @@ export function AssignScreensModal({
 
         <div className="modal-buttons">
           <button
-            onClick={handleSubmit}
+            onClick={() => onSubmit(selectedScreens)}
             disabled={selectedScreens.length === 0}
             style={{ opacity: selectedScreens.length === 0 ? 0.4 : 1 }}
           >

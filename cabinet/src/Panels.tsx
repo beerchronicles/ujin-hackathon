@@ -1,29 +1,38 @@
 import { useState } from 'react';
-import type { Template } from './common';
-import {
-  MOCK_TEMPLATES,
-  getBuildingsByComplex,
-  getComplexes,
-  getScreensByBuilding,
-} from './common';
+import type { Building, Complex, Screen, Template } from './common';
+import { getBuildingTitle, getComplexTitle, unique } from './common';
 
 interface LeftSideProps {
+  screens: Screen[];
+  templates: Template[];
+  complexes: Complex[];
+  buildings: Building[];
   onSelectTemplate: (template: Template) => void;
   onCreateTemplate: () => void;
   onPreview: (template: Template) => void;
 }
 
 export function LeftSide({
+  screens,
+  templates,
+  complexes,
+  buildings,
   onSelectTemplate,
   onCreateTemplate,
   onPreview,
 }: LeftSideProps) {
-  const [expandedComplexes, setExpandedComplexes] = useState<string[]>([]);
-  const [expandedBuildings, setExpandedBuildings] = useState<string[]>([]);
+  const [expandedComplexes, setExpandedComplexes] = useState<number[]>([]);
+  const [expandedBuildings, setExpandedBuildings] = useState<number[]>([]);
 
-  function toggleValue(
-    value: string,
-    setList: React.Dispatch<React.SetStateAction<string[]>>
+  const complexIds = unique(
+    screens
+      .map((screen) => screen.complex)
+      .filter((id): id is number => typeof id === 'number')
+  );
+
+  function toggleNumber(
+    value: number,
+    setList: React.Dispatch<React.SetStateAction<number[]>>
   ) {
     setList((currentList) => {
       if (currentList.includes(value)) {
@@ -39,43 +48,55 @@ export function LeftSide({
       <div className="section-box">
         <h4 className="section-title">Список экранов</h4>
 
-        {getComplexes().map((complex) => {
-          const isComplexOpen = expandedComplexes.includes(complex);
+        {complexIds.map((complexId) => {
+          const isComplexOpen = expandedComplexes.includes(complexId);
+          const complexScreens = screens.filter((screen) => screen.complex === complexId);
+
+          const buildingIds = unique(
+            complexScreens
+              .map((screen) => screen.building)
+              .filter((id): id is number => typeof id === 'number')
+          );
 
           return (
-            <div key={complex}>
+            <div key={complexId}>
               <div
                 className="accordion-title"
-                onClick={() => toggleValue(complex, setExpandedComplexes)}
+                onClick={() => toggleNumber(complexId, setExpandedComplexes)}
               >
                 {isComplexOpen ? '[-] ' : '[+] '}
-                {complex}
+                {getComplexTitle(complexes, complexId)}
               </div>
 
               {isComplexOpen && (
                 <div className="accordion-content">
-                  {getBuildingsByComplex(complex).map((building) => {
-                    const buildingKey = `${complex}::${building}`;
-                    const isBuildingOpen = expandedBuildings.includes(buildingKey);
+                  {buildingIds.map((buildingId) => {
+                    const isBuildingOpen = expandedBuildings.includes(buildingId);
 
                     return (
-                      <div key={buildingKey}>
+                      <div key={buildingId}>
                         <div
                           className="accordion-title"
                           style={{ fontSize: '14px' }}
-                          onClick={() => toggleValue(buildingKey, setExpandedBuildings)}
+                          onClick={() => toggleNumber(buildingId, setExpandedBuildings)}
                         >
                           {isBuildingOpen ? '[-] ' : '[+] '}
-                          {building}
+                          {getBuildingTitle(buildings, buildingId)}
                         </div>
 
                         {isBuildingOpen && (
                           <div className="accordion-content">
-                            {getScreensByBuilding(complex, building).map((screen) => (
-                              <div key={screen.id} className="screen-item">
-                                {screen.name}
-                              </div>
-                            ))}
+                            {screens
+                              .filter(
+                                (screen) =>
+                                  screen.complex === complexId &&
+                                  screen.building === buildingId
+                              )
+                              .map((screen) => (
+                                <div key={screen.id} className="screen-item">
+                                  {screen.name}
+                                </div>
+                              ))}
                           </div>
                         )}
                       </div>
@@ -91,7 +112,7 @@ export function LeftSide({
       <div className="section-box">
         <h4 className="section-title">Список шаблонов</h4>
 
-        {MOCK_TEMPLATES.map((template) => (
+        {templates.map((template) => (
           <div
             key={template.id}
             style={{ display: 'flex', gap: '5px', marginBottom: '6px' }}

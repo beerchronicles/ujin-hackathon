@@ -1,58 +1,64 @@
 export interface Screen {
-  id: string;
+  id: number;
   name: string;
-  complex: string;
-  building: string;
+  templateId?: number;
+  complex?: number;
+  building?: number;
+  chs?: boolean;
+  chsText?: string;
 }
 
 export interface Template {
-  id: string;
+  id: number;
   name: string;
-  widgets: any[];
+  scrollTime?: number;
+  mainBlockImage?: string;
+  mainBlockContent?: string;
+  mainBlockTitle?: string;
+  block1Content?: string;
+  block2Content?: string;
+  block1Title?: string;
+  block2Title?: string;
+  contact1Name?: string;
+  contact1Phone?: string;
+  contact2Name?: string;
+  contact2Phone?: string;
+  contact3Name?: string;
+  contact3Phone?: string;
+  contact4Name?: string;
+  contact4Phone?: string;
 }
 
-export const MOCK_SCREENS: Screen[] = [
-  { id: 'scr_1', name: 'Экран Холл 1', complex: 'Комплекс А', building: 'Здание 1' },
-  { id: 'scr_2', name: 'Экран Лифт 1', complex: 'Комплекс А', building: 'Здание 1' },
-  { id: 'scr_3', name: 'Экран Ресепшн', complex: 'Комплекс Б', building: 'Главное здание' },
-  { id: 'scr_4', name: 'Экран Холл 2', complex: 'Комплекс Б', building: 'Здание 2' },
-];
+export interface Complex {
+  id: number;
+  title: string;
+  timezone?: string;
+}
 
-export const MOCK_TEMPLATES: Template[] = [
-  { id: 'tpl_1', name: 'Шаблон 1', widgets: [] },
-  { id: 'tpl_2', name: 'Шаблон 2', widgets: [] },
-];
+export interface Building {
+  id: number;
+  title: string;
+  complexId: number;
+  complexTitle?: string;
+  timezone?: string;
+}
 
 export function unique<T>(items: T[]) {
   return Array.from(new Set(items));
-}
-
-export function getComplexes() {
-  return unique(MOCK_SCREENS.map((screen) => screen.complex));
-}
-
-export function getBuildingsByComplex(complex: string) {
-  return unique(
-    MOCK_SCREENS
-      .filter((screen) => screen.complex === complex)
-      .map((screen) => screen.building)
-  );
-}
-
-export function getScreensByComplex(complex: string) {
-  return MOCK_SCREENS.filter((screen) => screen.complex === complex);
-}
-
-export function getScreensByBuilding(complex: string, building: string) {
-  return MOCK_SCREENS.filter(
-    (screen) => screen.complex === complex && screen.building === building
-  );
 }
 
 export function getScreenIds(screens: Screen[]) {
   return screens.map((screen) => screen.id);
 }
 
-export function getScreenNameById(id: string) {
-  return MOCK_SCREENS.find((screen) => screen.id === id)?.name || id;
+export function getScreenNameById(screens: Screen[], id: number) {
+  return screens.find((screen) => screen.id === id)?.name || String(id);
+}
+
+export function getComplexTitle(complexes: Complex[], id?: number) {
+  return complexes.find((complex) => complex.id === id)?.title || `Комплекс ${id ?? '-'}`;
+}
+
+export function getBuildingTitle(buildings: Building[], id?: number) {
+  return buildings.find((building) => building.id === id)?.title || `Здание ${id ?? '-'}`;
 }

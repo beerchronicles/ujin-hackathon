@@ -1,23 +1,34 @@
 import { useState } from 'react';
-import { MOCK_SCREENS, getScreenNameById } from './common';
+import { api } from './api';
+import type { Screen } from './common';
+import { getScreenNameById } from './common';
 
 interface EmergencyPanelProps {
+  screens: Screen[];
   onBack: () => void;
+  onReload: () => void;
 }
 
-export function EmergencyPanel({ onBack }: EmergencyPanelProps) {
-  const [selectedChsScreens, setSelectedChsScreens] = useState<string[]>([]);
-  const [selectedNormalScreens, setSelectedNormalScreens] = useState<string[]>([]);
+export function EmergencyPanel({
+  screens,
+  onBack,
+  onReload,
+}: EmergencyPanelProps) {
+  const [selectedChsScreens, setSelectedChsScreens] = useState<number[]>([]);
+  const [selectedNormalScreens, setSelectedNormalScreens] = useState<number[]>([]);
   const [modalStep, setModalStep] = useState(0);
   const [emergencyText, setEmergencyText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const chsScreens = screens.filter((screen) => screen.chs);
+  const normalScreens = screens.filter((screen) => !screen.chs);
 
   const selectedCount = selectedChsScreens.length + selectedNormalScreens.length;
   const isCommandDisabled = selectedCount === 0 || isSubmitting;
 
   function toggleScreen(
-    screenId: string,
-    setList: React.Dispatch<React.SetStateAction<string[]>>
+    screenId: number,
+    setList: React.Dispatch<React.SetStateAction<number[]>>
   ) {
     setList((currentList) => {
       if (currentList.includes(screenId)) {
@@ -39,25 +50,53 @@ export function EmergencyPanel({ onBack }: EmergencyPanelProps) {
     }
   }
 
+  async function updateEmergencyState(
+    screenIds: number[],
+    chs: boolean,
+    chsText: string
+  ) {
+    await Promise.all(
+      screenIds.map((screenId) => {
+        const screen = screens.find((item) => item.id === screenId);
+
+        return api.updateScreen(screenId, {
+          name: screen?.name || 'Экран',
+          templateId: screen?.templateId,
+          complex: screen?.complex,
+          building: screen?.building,
+          chs,
+          chsText,
+        });
+      })
+    );
+  }
+
   async function submitAction() {
-    setIsSubmitting(true);
+    try {
+      setIsSubmitting(true);
 
-    // Тут пока имитация запроса, потом заменим на вызов API.
-    await new Promise((resolve) => setTimeout(resolve, 500));
+      if (modalStep === 1) {
+        await updateEmergencyState(selectedChsScreens, false, '');
+        alert('Режим ЧС отключен');
+      }
 
-    if (modalStep === 1) {
-      alert('Режим ЧС отключен');
+      if (modalStep === 5) {
+        await updateEmergencyState(selectedNormalScreens, true, emergencyText);
+        alert('Режим ЧС активирован');
+      }
+
+      await onReload();
+
+      setModalStep(0);
+      setSelectedChsScreens([]);
+      setSelectedNormalScreens([]);
+      setEmergencyText('');
+    } catch (error) {
+      console.error('Ошибка команды ЧС:', error);
+      alert('Не удалось выполнить команду ЧС');
+    } finally {
+      setIsSubmitting(false);
     }
-
-    if (modalStep === 5) {
-      alert('Режим ЧС активирован');
-    }
-
-    setIsSubmitting(false);
-    setModalStep(0);
-    setSelectedChsScreens([]);
-    setSelectedNormalScreens([]);
-    setEmergencyText('');
   }
 
   return (
@@ -78,7 +117,7 @@ export function EmergencyPanel({ onBack }: EmergencyPanelProps) {
           <h3 className="text-red">Экраны с активной ЧС</h3>
 
           <div className="screen-list-vertical">
-            {MOCK_SCREENS.map((screen) => {
+            {chsScreens.map((screen) => {
               const isSelected = selectedChsScreens.includes(screen.id);
 
               return (
@@ -99,7 +138,7 @@ export function EmergencyPanel({ onBack }: EmergencyPanelProps) {
           <h3>Экраны в штатном режиме</h3>
 
           <div className="screen-list-vertical">
-            {MOCK_SCREENS.map((screen) => {
+            {normalScreens.map((screen) => {
               const isSelected = selectedNormalScreens.includes(screen.id);
 
               return (
@@ -149,8 +188,8 @@ export function EmergencyPanel({ onBack }: EmergencyPanelProps) {
                 <p className="modal-text">Экраны для активации ЧС:</p>
 
                 <div className="modal-list-box">
-                  {[...selectedNormalScreens, ...selectedChsScreens].map((id) => (
-                    <div key={id}>{getScreenNameById(id)}</div>
+                  {selectedNormalScreens.map((id) => (
+                    <div key={id}>{getScreenNameById(screens, id)}</div>
                   ))}
                 </div>
 
