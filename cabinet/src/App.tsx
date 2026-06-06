@@ -35,56 +35,76 @@ const LeftSide = ({
   onCreateTemplate: () => void; 
   onPreview: (t: Template) => void; 
 }) => {
-  const [expandedComplex, setExpandedComplex] = useState<string | null>(null);
-  const [expandedBuilding, setExpandedBuilding] = useState<string | null>(null);
+  const [expandedComplexes, setExpandedComplexes] = useState<string[]>([]);
+  const [expandedBuildings, setExpandedBuildings] = useState<string[]>([]);
 
   const complexes = Array.from(new Set(MOCK_SCREENS.map(s => s.complex)));
+
+  const toggleComplex = (complex: string) => {
+    setExpandedComplexes(prev =>
+      prev.includes(complex)
+        ? prev.filter(item => item !== complex)
+        : [...prev, complex]
+    );
+  };
+
+  const toggleBuilding = (complex: string, building: string) => {
+    const buildingKey = `${complex}::${building}`;
+
+    setExpandedBuildings(prev =>
+      prev.includes(buildingKey)
+        ? prev.filter(item => item !== buildingKey)
+        : [...prev, buildingKey]
+    );
+  };
 
   return (
     <aside className="sidebar">
       <div className="section-box">
         <h4 className="section-title">Список экранов</h4>
+
         {complexes.map(complex => (
           <div key={complex}>
             <div 
               className="accordion-title" 
-              onClick={() => {
-                setExpandedComplex(expandedComplex === complex ? null : complex);
-                if (expandedComplex !== complex) setExpandedBuilding(null);
-              }}
+              onClick={() => toggleComplex(complex)}
             >
-              {expandedComplex === complex ? '[-] ' : '[+] '} {complex}
+              {expandedComplexes.includes(complex) ? '[-] ' : '[+] '} {complex}
             </div>
             
-            {expandedComplex === complex && (
+            {expandedComplexes.includes(complex) && (
               <div className="accordion-content">
                 {MOCK_SCREENS
                   .filter(s => s.complex === complex)
                   .map(s => s.building)
-                  .filter((v, i, a) => a.indexOf(v) === i) // Уникальные здания
-                  .map(building => (
-                    <div key={building}>
-                      <div 
-                        className="accordion-title" 
-                        style={{ fontSize: '14px' }}
-                        onClick={() => setExpandedBuilding(expandedBuilding === building ? null : building)}
-                      >
-                        {expandedBuilding === building ? '[-] ' : '[+] '} {building}
-                      </div>
-                      
-                      {expandedBuilding === building && (
-                        <div className="accordion-content">
-                          {MOCK_SCREENS
-                            .filter(s => s.complex === complex && s.building === building)
-                            .map(screen => (
-                              <div key={screen.id} className="screen-item">
-                                {screen.name}
-                              </div>
-                            ))}
+                  .filter((value, index, array) => array.indexOf(value) === index)
+                  .map(building => {
+                    const buildingKey = `${complex}::${building}`;
+
+                    return (
+                      <div key={buildingKey}>
+                        <div 
+                          className="accordion-title" 
+                          style={{ fontSize: '14px' }}
+                          onClick={() => toggleBuilding(complex, building)}
+                        >
+                          {expandedBuildings.includes(buildingKey) ? '[-] ' : '[+] '} {building}
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        
+                        {expandedBuildings.includes(buildingKey) && (
+                          <div className="accordion-content">
+                            {MOCK_SCREENS
+                              .filter(s => s.complex === complex && s.building === building)
+                              .map(screen => (
+                                <div key={screen.id} className="screen-item">
+                                  {screen.name}
+                                </div>
+                              ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
               </div>
             )}
           </div>
@@ -93,13 +113,41 @@ const LeftSide = ({
 
       <div className="section-box">
         <h4 className="section-title">Список шаблонов</h4>
+
         {MOCK_TEMPLATES.map(tpl => (
-          <div key={tpl.id} style={{ display: 'flex', gap: '5px', marginBottom: '6px' }}>
-            <button className="proto-btn" onClick={() => onSelectTemplate(tpl)} style={{ flex: 1 }}>{tpl.name}</button>
-            <button className="proto-btn" onClick={() => onPreview(tpl)} style={{ width: '40px' }}>👁</button>
+          <div 
+            key={tpl.id} 
+            style={{ 
+              display: 'flex', 
+              gap: '5px', 
+              marginBottom: '6px' 
+            }}
+          >
+            <button 
+              className="proto-btn" 
+              onClick={() => onSelectTemplate(tpl)} 
+              style={{ flex: 1 }}
+            >
+              {tpl.name}
+            </button>
+
+            <button 
+              className="proto-btn" 
+              onClick={() => onPreview(tpl)} 
+              style={{ width: '40px' }}
+            >
+              👁
+            </button>
           </div>
         ))}
-        <button className="proto-btn btn-dashed" onClick={onCreateTemplate} style={{ marginTop: '12px' }}>+ Создать новый</button>
+
+        <button 
+          className="proto-btn btn-dashed" 
+          onClick={onCreateTemplate} 
+          style={{ marginTop: '12px' }}
+        >
+          + Создать новый
+        </button>
       </div>
     </aside>
   );
