@@ -16,7 +16,7 @@ session:
   cookie:
     name: ${SESSION_COOKIE_NAME:SESSION}
     same-site: ${SESSION_COOKIE_SAME_SITE:None}
-    secure: ${SESSION_COOKIE_SECURE:false}
+    secure: ${SESSION_COOKIE_SECURE:true}
 
 ujin:
   base-url: https://hck-api.unicorn.icu/
