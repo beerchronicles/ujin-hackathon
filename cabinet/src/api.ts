@@ -1,6 +1,6 @@
-import type { Building, Complex, Screen, Template } from './common';
+import type { Building, Complex, Screen, Template, TemplateRequest } from './common';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
 type RequestMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -37,6 +37,31 @@ async function request<T>(
   return response.json();
 }
 
+async function upload<T>(path: string, fieldName: string, file: File): Promise<T> {
+  const formData = new FormData();
+  formData.append(fieldName, file);
+
+  const response = await fetch(`${API_URL}${path}`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+
+    console.error('Upload failed:', {
+      path,
+      status: response.status,
+      errorText,
+    });
+
+    throw new Error(`Upload error ${response.status}: ${errorText}`);
+  }
+
+  return response.json();
+}
+
 async function loginByToken(token: string) {
   const formData = new URLSearchParams();
   formData.append('token', token);
@@ -62,6 +87,18 @@ async function loginByToken(token: string) {
   }
 }
 
+export function getImageUrl(imageKey: string | null | undefined) {
+  if (!imageKey) {
+    return undefined;
+  }
+
+  if (/^https?:\/\//i.test(imageKey)) {
+    return imageKey;
+  }
+
+  return `${API_URL}/images/${encodeURIComponent(imageKey)}`;
+}
+
 export const api = {
   loginByToken,
 
@@ -75,6 +112,10 @@ export const api = {
 
   updateScreen(id: number, data: Partial<Screen>) {
     return request<Screen>(`/screens/${id}`, 'PUT', data);
+  },
+
+  emergencyReset(screenId: number) {
+    return request<Screen>(`/screens/${screenId}/emergency_reset`, 'POST');
   },
 
   createScreen(data: Partial<Screen>) {
@@ -93,12 +134,20 @@ export const api = {
     return request<Template>(`/templates/${id}`);
   },
 
-  createTemplate(data: Partial<Template>) {
+  createTemplate(data: TemplateRequest) {
     return request<Template>('/templates', 'POST', data);
   },
 
-  updateTemplate(id: number, data: Partial<Template>) {
+  updateTemplate(id: number, data: TemplateRequest) {
     return request<Template>(`/templates/${id}`, 'PUT', data);
+  },
+
+  uploadMainBlockImage(id: number, file: File) {
+    return upload<Template>(`/templates/${id}/main-block-image`, 'image', file);
+  },
+
+  deleteMainBlockImage(id: number) {
+    return request<Template>(`/templates/${id}/main-block-image`, 'DELETE');
   },
 
   deleteTemplate(id: number) {

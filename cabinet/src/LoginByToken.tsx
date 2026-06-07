@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { api } from './api';
 
 interface LoginByTokenProps {
@@ -10,7 +10,7 @@ export function LoginByToken({ onSuccess }: LoginByTokenProps) {
   const [isSending, setIsSending] = useState(false);
   const [errorText, setErrorText] = useState('');
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const trimmedToken = token.trim();
@@ -25,9 +25,6 @@ export function LoginByToken({ onSuccess }: LoginByTokenProps) {
       setErrorText('');
 
       await api.loginByToken(trimmedToken);
-
-      // После успешного login backend должен поставить cookie SESSION.
-      // Дальше App заново загрузит данные уже с credentials.
       onSuccess();
     } catch (error) {
       console.error('Ошибка входа по токену:', error);
@@ -39,13 +36,7 @@ export function LoginByToken({ onSuccess }: LoginByTokenProps) {
 
   return (
     <div className="admin-panel">
-      <div
-        className="section-box"
-        style={{
-          width: '420px',
-          margin: '80px auto',
-        }}
-      >
+      <div className="section-box login-box">
         <h3>Вход по токену</h3>
 
         <form onSubmit={handleSubmit}>
@@ -53,24 +44,10 @@ export function LoginByToken({ onSuccess }: LoginByTokenProps) {
             value={token}
             onChange={(event) => setToken(event.target.value)}
             placeholder="Вставьте токен"
-            className="modal-textarea"
-            style={{
-              height: '120px',
-              resize: 'vertical',
-            }}
+            className="modal-textarea token-textarea"
           />
 
-          {errorText && (
-            <p
-              className="text-red"
-              style={{
-                display: 'block',
-                marginBottom: '10px',
-              }}
-            >
-              {errorText}
-            </p>
-          )}
+          {errorText && <p className="text-red login-error">{errorText}</p>}
 
           <button type="submit" disabled={isSending}>
             {isSending ? 'Проверка токена...' : 'Войти'}

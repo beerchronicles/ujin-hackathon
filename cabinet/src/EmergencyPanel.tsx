@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { type Dispatch, type SetStateAction, useState } from 'react';
 import { api } from './api';
 import type { Screen } from './common';
 import { getScreenNameById } from './common';
@@ -28,7 +28,7 @@ export function EmergencyPanel({
 
   function toggleScreen(
     screenId: number,
-    setList: React.Dispatch<React.SetStateAction<number[]>>
+    setList: Dispatch<SetStateAction<number[]>>
   ) {
     setList((currentList) => {
       if (currentList.includes(screenId)) {
@@ -59,11 +59,15 @@ export function EmergencyPanel({
       screenIds.map((screenId) => {
         const screen = screens.find((item) => item.id === screenId);
 
+        if (!screen) {
+          throw new Error(`Screen ${screenId} not found`);
+        }
+
         return api.updateScreen(screenId, {
-          name: screen?.name || 'Экран',
-          templateId: screen?.templateId,
-          complex: screen?.complex,
-          building: screen?.building,
+          name: screen.name,
+          templateId: screen.templateId,
+          complex: screen.complex,
+          building: screen.building,
           chs,
           chsText,
         });
@@ -71,12 +75,16 @@ export function EmergencyPanel({
     );
   }
 
+  async function resetEmergencyState(screenIds: number[]) {
+    await Promise.all(screenIds.map((screenId) => api.emergencyReset(screenId)));
+  }
+
   async function submitAction() {
     try {
       setIsSubmitting(true);
 
       if (modalStep === 1) {
-        await updateEmergencyState(selectedChsScreens, false, '');
+        await resetEmergencyState(selectedChsScreens);
         alert('Режим ЧС отключен');
       }
 
@@ -105,8 +113,9 @@ export function EmergencyPanel({
         <h2>Управление режимом ЧС</h2>
 
         <button
+          type="button"
           onClick={onBack}
-          style={{ width: 'auto', padding: '8px 20px' }}
+          className="header-button"
         >
           Назад
         </button>
@@ -121,14 +130,15 @@ export function EmergencyPanel({
               const isSelected = selectedChsScreens.includes(screen.id);
 
               return (
-                <div
+                <button
+                  type="button"
                   key={screen.id}
                   className={`screen-item ${isSelected ? 'active-red' : ''}`}
                   onClick={() => toggleScreen(screen.id, setSelectedChsScreens)}
                 >
                   {isSelected ? '[ВЫБРАН] ' : ''}
                   {screen.name}
-                </div>
+                </button>
               );
             })}
           </div>
@@ -142,14 +152,15 @@ export function EmergencyPanel({
               const isSelected = selectedNormalScreens.includes(screen.id);
 
               return (
-                <div
+                <button
+                  type="button"
                   key={screen.id}
                   className={`screen-item ${isSelected ? 'active-teal' : ''}`}
                   onClick={() => toggleScreen(screen.id, setSelectedNormalScreens)}
                 >
                   {isSelected ? '[ВЫБРАН] ' : ''}
                   {screen.name}
-                </div>
+                </button>
               );
             })}
           </div>
@@ -157,9 +168,9 @@ export function EmergencyPanel({
 
         <div className="emergency-action-sidebar">
           <button
+            type="button"
             className="emergency-btn big-emergency-btn"
             disabled={isCommandDisabled}
-            style={{ opacity: isCommandDisabled ? 0.4 : 1 }}
             onClick={openActionModal}
           >
             {isSubmitting ? 'Отправка...' : 'Выполнить команду ЧС'}
@@ -177,8 +188,8 @@ export function EmergencyPanel({
                 </p>
 
                 <div className="modal-buttons">
-                  <button onClick={submitAction}>Да</button>
-                  <button onClick={() => setModalStep(0)}>Нет</button>
+                  <button type="button" onClick={submitAction}>Да</button>
+                  <button type="button" onClick={() => setModalStep(0)}>Нет</button>
                 </div>
               </>
             )}
@@ -194,8 +205,8 @@ export function EmergencyPanel({
                 </div>
 
                 <div className="modal-buttons">
-                  <button onClick={() => setModalStep(3)}>Продолжить</button>
-                  <button onClick={() => setModalStep(0)}>Отмена</button>
+                  <button type="button" onClick={() => setModalStep(3)}>Продолжить</button>
+                  <button type="button" onClick={() => setModalStep(0)}>Отмена</button>
                 </div>
               </>
             )}
@@ -212,8 +223,8 @@ export function EmergencyPanel({
                 />
 
                 <div className="modal-buttons">
-                  <button onClick={() => setModalStep(4)}>Продолжить</button>
-                  <button onClick={() => setModalStep(2)}>Отмена</button>
+                  <button type="button" onClick={() => setModalStep(4)}>Продолжить</button>
+                  <button type="button" onClick={() => setModalStep(2)}>Отмена</button>
                 </div>
               </>
             )}
@@ -227,8 +238,8 @@ export function EmergencyPanel({
                 </div>
 
                 <div className="modal-buttons">
-                  <button onClick={() => setModalStep(5)}>Подтвердить</button>
-                  <button onClick={() => setModalStep(3)}>Отмена</button>
+                  <button type="button" onClick={() => setModalStep(5)}>Подтвердить</button>
+                  <button type="button" onClick={() => setModalStep(3)}>Отмена</button>
                 </div>
               </>
             )}
@@ -238,11 +249,11 @@ export function EmergencyPanel({
                 <p className="modal-text">Отправить сообщение на сервер?</p>
 
                 <div className="modal-buttons">
-                  <button onClick={submitAction}>
+                  <button type="button" onClick={submitAction}>
                     {isSubmitting ? 'Отправка...' : 'Да'}
                   </button>
 
-                  <button onClick={() => setModalStep(4)}>Отмена</button>
+                  <button type="button" onClick={() => setModalStep(4)}>Отмена</button>
                 </div>
               </>
             )}

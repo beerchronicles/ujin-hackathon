@@ -3,6 +3,7 @@ import './App.css';
 
 import { api } from './api';
 import type { Building, Complex, Screen, Template } from './common';
+import { getTemplateRequest } from './common';
 import { EmergencyPanel } from './EmergencyPanel';
 import { LoginByToken } from './LoginByToken';
 import { AssignScreensModal, PreviewModal } from './Modals';
@@ -21,6 +22,14 @@ export default function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [needLogin, setNeedLogin] = useState(false);
+
+  function applyTemplateUpdate(template: Template) {
+    setTemplates((prev) =>
+      prev.map((item) => (item.id === template.id ? template : item))
+    );
+    setCurrentTemplate(template);
+    setPreviewTemplate((prev) => (prev?.id === template.id ? template : prev));
+  }
 
   async function loadData() {
     try {
@@ -45,8 +54,6 @@ export default function App() {
       setNeedLogin(false);
     } catch (error) {
       console.error('Ошибка загрузки данных:', error);
-
-      // Если сессии нет или токен не прошёл, показываем форму входа.
       setNeedLogin(true);
     } finally {
       setIsLoading(false);
@@ -61,7 +68,21 @@ export default function App() {
     try {
       const newTemplate = await api.createTemplate({
         name: 'Новый шаблон',
-        scrollTime: 5,
+        scrollTime: 3000,
+        mainBlockContent: null,
+        mainBlockTitle: null,
+        block1Content: null,
+        block2Content: null,
+        block1Title: null,
+        block2Title: null,
+        contact1Name: null,
+        contact1Phone: null,
+        contact2Name: null,
+        contact2Phone: null,
+        contact3Name: null,
+        contact3Phone: null,
+        contact4Name: null,
+        contact4Phone: null,
       });
 
       setTemplates((prev) => [...prev, newTemplate]);
@@ -69,6 +90,39 @@ export default function App() {
     } catch (error) {
       console.error('Ошибка создания шаблона:', error);
       alert('Не удалось создать шаблон');
+    }
+  }
+
+  async function saveTemplate(template: Template) {
+    try {
+      const savedTemplate = await api.updateTemplate(
+        template.id,
+        getTemplateRequest(template)
+      );
+      applyTemplateUpdate(savedTemplate);
+    } catch (error) {
+      console.error('Ошибка сохранения шаблона:', error);
+      alert('Не удалось сохранить шаблон');
+    }
+  }
+
+  async function uploadMainBlockImage(template: Template, file: File) {
+    try {
+      const savedTemplate = await api.uploadMainBlockImage(template.id, file);
+      applyTemplateUpdate(savedTemplate);
+    } catch (error) {
+      console.error('Ошибка загрузки изображения:', error);
+      alert('Не удалось загрузить изображение');
+    }
+  }
+
+  async function deleteMainBlockImage(template: Template) {
+    try {
+      const savedTemplate = await api.deleteMainBlockImage(template.id);
+      applyTemplateUpdate(savedTemplate);
+    } catch (error) {
+      console.error('Ошибка удаления изображения:', error);
+      alert('Не удалось удалить изображение');
     }
   }
 
@@ -97,13 +151,17 @@ export default function App() {
         screenIds.map((screenId) => {
           const screen = screens.find((item) => item.id === screenId);
 
+          if (!screen) {
+            throw new Error(`Screen ${screenId} not found`);
+          }
+
           return api.updateScreen(screenId, {
-            name: screen?.name || 'Экран',
+            name: screen.name,
             templateId: currentTemplate.id,
-            complex: screen?.complex,
-            building: screen?.building,
-            chs: screen?.chs || false,
-            chsText: screen?.chsText || '',
+            complex: screen.complex,
+            building: screen.building,
+            chs: screen.chs,
+            chsText: screen.chsText || '',
           });
         })
       );
@@ -119,7 +177,9 @@ export default function App() {
   }
 
   useEffect(() => {
-    loadData();
+    queueMicrotask(() => {
+      void loadData();
+    });
   }, []);
 
   if (isLoading) {
@@ -152,16 +212,24 @@ export default function App() {
           templates={templates}
           complexes={complexes}
           buildings={buildings}
+          currentTemplateId={currentTemplate?.id}
           onSelectTemplate={setCurrentTemplate}
           onCreateTemplate={createTemplate}
           onPreview={setPreviewTemplate}
         />
 
-        <TemplateConstructor template={currentTemplate} />
+        <TemplateConstructor
+          template={currentTemplate}
+          onChange={setCurrentTemplate}
+          onSave={saveTemplate}
+          onUploadMainBlockImage={uploadMainBlockImage}
+          onDeleteMainBlockImage={deleteMainBlockImage}
+        />
 
         <RightSide
           currentTemplate={currentTemplate}
-          onSave={() => setIsAssignModalOpen(true)}
+          onAssign={() => setIsAssignModalOpen(true)}
+          onPreview={() => currentTemplate && setPreviewTemplate(currentTemplate)}
           onEmergency={() => setIsEmergencyPage(true)}
           onDelete={deleteTemplate}
         />
@@ -170,6 +238,9 @@ export default function App() {
       {previewTemplate && (
         <PreviewModal
           template={previewTemplate}
+          screens={screens}
+          complexes={complexes}
+          buildings={buildings}
           onClose={() => setPreviewTemplate(null)}
         />
       )}
